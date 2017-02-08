@@ -1,8 +1,8 @@
 #import os
-from flask import Flask#, render_template, request, redirect
-cars_app = Flask(__name__)
+from flask import Flask, render_template, request, redirect
+app = Flask(__name__)
 
-#app.vars={}
+app.vars={}
 #
 #app.questions={}
 #app.questions['How many eyes do you have?']=('1','2','3')
@@ -11,18 +11,21 @@ cars_app = Flask(__name__)
 #
 #app.nquestions=len(app.questions)
 
-@cars_app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 def hello():
-    #app.vars['name'] = request.form['Make']
-    #app.vars['age'] = request.form['Model']
-    #app.vars['year'] = request.form['Year']
-    #app.vars['mileage'] = request.form['Mileage']
+    if request.method == 'GET':
+        return render_template('userinfo.html')
+    else:
+        app.vars['name'] = request.form['Make']
+        app.vars['age'] = request.form['Model']
+        app.vars['year'] = request.form['Year']
+        app.vars['mileage'] = request.form['Mileage']
 
-    #f = open('%s_%s.txt'%(app.vars['name'],app.vars['age']),'w')
-    #f.write('Name: %s\n'%(app.vars['name']))
-    #f.write('Age: %s\n\n'%(app.vars['age']))
-    #f.close()
-    return "Hello world!"
+        f = open('%s_%s.txt'%(app.vars['make'],app.vars['model']),'w')
+        f.write('Make: %s\n'%(app.vars['make']))
+        f.write('Model: %s\n\n'%(app.vars['model']))
+        f.close()
+        return "Hello world!"
 #    return redirect('/main')
 
 #@app.route('/main')
@@ -66,4 +69,4 @@ def hello():
 
 if __name__ == "__main__":
     #port = int(os.environ.get("PORT", 5000))
-    cars_app.run()#host='0.0.0.0', port=port)
+    app.run()#host='0.0.0.0', port=port)

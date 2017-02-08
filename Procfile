@@ -1,1 +1,1 @@
-web: gunicorn cars_app:cars_app --log-file=-
+web: gunicorn cars_app:app --log-file=-
