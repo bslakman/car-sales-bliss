@@ -3,13 +3,6 @@ from flask import Flask, render_template, request, redirect
 app = Flask(__name__)
 
 app.vars={}
-#
-#app.questions={}
-#app.questions['How many eyes do you have?']=('1','2','3')
-#app.questions['Which fruit do you like best?']=('banana','mango','pineapple')
-#app.questions['Do you like cupcakes?']=('yes','no','maybe')
-#
-#app.nquestions=len(app.questions)
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -21,18 +14,12 @@ def index():
         app.vars['year'] = request.form['Year']
         app.vars['mileage'] = request.form['Mileage']
 
-        f = open('%s_%s.txt'%(app.vars['make'],app.vars['model']),'w')
-        f.write('Make: %s\n'%(app.vars['make']))
-        f.write('Model: %s\n\n'%(app.vars['model']))
-        f.close()
-        return "Hello world!"
-#    return redirect('/main')
+        return redirect('/result')
 
-#@app.route('/main')
-#def main():
-#    #if len(app.questions)==0 : return render_template('end.html')
-#    return render_template('end.html')
-#
+@app.route('/result')
+def result():
+    return render_template('end.html')
+
 ######################################
 ### IMPORTANT: I have separated /next INTO GET AND POST
 ### You can also do this in one function, with If and Else
