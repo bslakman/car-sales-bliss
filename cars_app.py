@@ -1,4 +1,8 @@
-#import os
+from craigslist import *
+import seaborn as sns
+import matplotlib.pyplot as plt
+import numpy as np
+
 from io import BytesIO
 from flask import Flask, render_template, request, redirect, send_file
 app = Flask(__name__)
@@ -21,9 +25,9 @@ def index():
 def result():
     return render_template('car_result.html')
 
-@app.route('/fig')
+@app.route('/fig/')
 def fig():
-    fig = None
+    fig = draw_regional_fig(app.vars['make'], app.vars['model'], app.vars['year'])
     img = BytesIO()
     fig.savefig(img)
     img.seek(0)
