@@ -1,5 +1,6 @@
 #import os
-from flask import Flask, render_template, request, redirect
+from io import BytesIO
+from flask import Flask, render_template, request, redirect, send_file
 app = Flask(__name__)
 
 app.vars={}
@@ -7,7 +8,7 @@ app.vars={}
 @app.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == 'GET':
-        return render_template('userinfo.html')
+        return render_template('car_info.html')
     else:
         app.vars['make'] = request.form['Make']
         app.vars['model'] = request.form['Model']
@@ -18,7 +19,15 @@ def index():
 
 @app.route('/result')
 def result():
-    return render_template('end.html')
+    return render_template('car_result.html')
+
+@app.route('/fig')
+def fig():
+    fig = None
+    img = BytesIO()
+    fig.savefig(img)
+    img.seek(0)
+    return send_file(img, mimetype='image/png')
 
 ######################################
 ### IMPORTANT: I have separated /next INTO GET AND POST
