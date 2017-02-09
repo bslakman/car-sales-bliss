@@ -12,12 +12,12 @@ app.vars={}
 #app.nquestions=len(app.questions)
 
 @app.route('/', methods=['GET', 'POST'])
-def hello():
+def index():
     if request.method == 'GET':
         return render_template('userinfo.html')
     else:
-        app.vars['name'] = request.form['Make']
-        app.vars['age'] = request.form['Model']
+        app.vars['make'] = request.form['Make']
+        app.vars['model'] = request.form['Model']
         app.vars['year'] = request.form['Year']
         app.vars['mileage'] = request.form['Mileage']
 
