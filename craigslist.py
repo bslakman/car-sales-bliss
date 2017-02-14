@@ -20,7 +20,7 @@ def fetch(query = None, auto_make_model = None, min_auto_year = None, max_auto_y
 # In[4]:
 
 def parse(html, encoding='utf-8'):
-    parsed = BeautifulSoup(html, from_encoding=encoding)
+    parsed = BeautifulSoup(html, 'lxml', from_encoding=encoding)
     return parsed
 
 
@@ -113,13 +113,13 @@ def draw_regional_fig(make, model, year):
     regions = regions.append(pd.Series(data={'year': np.mean(df['year']), 'price': np.mean(df['price']), 'mileage': np.mean(df['mileage'])}, name='AVERAGE'))
     
     sns.set_style('ticks')
-    my_title = 'Average Price and Mileage of Used {0} {1}, {2}-{3}, by region, n={4}'.format(make, model, min_auto_year, max_auto_year, len(df))
-    ax = regions['price'].plot.bar(position=0, width=0.3, alpha=0.5, legend=True, title=my_title)
+    my_title = 'Average Price and Mileage of Used {0} {1}, \n{2}-{3}, by region, n={4}'.format(make, model, min_auto_year, max_auto_year, len(df))
+    ax = regions['price'].plot.bar(position=0, width=0.3, alpha=0.5, legend=True, title=my_title, figsize=(5,3))
     ax.set_ylabel('Price($)')
     ax = regions['mileage'].plot.bar(secondary_y=True, color='green', position=1, width=0.3, alpha=0.5, legend=True)
     ax.set_ylabel('Mileage')
     sns.despine(top=True, right=False)
     fig=ax.get_figure()
-    
+    fig.set_tight_layout(True) 
     return fig
 
