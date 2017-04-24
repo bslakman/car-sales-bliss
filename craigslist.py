@@ -200,11 +200,13 @@ def predict(make='', model='', year='', mileage='', title_status='', color='', b
              'type': body_type,
              }]
     v = joblib.load('Cars/dv.pkl')
+    n = joblib.load('Cars/mas.pkl')
     X_trans = v.transform(X_test)
+    X_norm = n.transform(X_trans)
     kn = joblib.load('Cars/kneighbors_kn.pkl')
     all_filtered = joblib.load('Cars/all_filtered.pkl')
-    price = kn.predict(X_trans[0])
+    price = kn.predict(X_norm[0])
     neighbors_info = []
-    for j in kn.kneighbors(X_trans[0])[1][0][:10]:
+    for j in kn.kneighbors(X_norm[0])[1][0][:10]:
         neighbors_info.append((all_filtered.iloc[j]['description'],all_filtered.iloc[j]['link'],all_filtered.iloc[j]['price']))
     return price[0], neighbors_info
