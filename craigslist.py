@@ -156,7 +156,7 @@ def draw_regional_fig_bokeh(make, model, year):
     listings = get_listings(make, model, year)
 
     df = pd.DataFrame(data=listings)
-    if len(df) == 0: return "No results found, check your spelling"
+    if len(df) == 0: return row()#"No results found, check your spelling"
     df['mileage'] = df.apply(lambda row: get_mileage(row['description']), axis=1)
     df['price'] = df.apply(lambda row: get_price(row['price']), axis=1)
     df['region'] = df['link'].str[1:5]
@@ -191,10 +191,18 @@ def get_listings(make,model,year):
     return listings
 
 def predict(make='', model='', year='', mileage='', title_status='', color='', body_type=''):
+    try:
+        year = int(year)
+    except:
+        year = 2017
+    try:
+        mileage = int(mileage)
+    except:
+        mileage = 60000 # many will elect to sell a car before major service is needed 
     X_test = [{'make': make.lower(),
              'model': model.lower(),
-             'year': int(year) if year else 0,
-             'odometer': int(mileage) if mileage else 0,
+             'year': year, 
+             'odometer': mileage, 
              'title status': title_status,
              'paint color': color,
              'type': body_type,
