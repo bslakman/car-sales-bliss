@@ -194,27 +194,29 @@ def predict(make='', model='', year='', mileage='', title_status='', color='', b
     try:
         year = int(year)
     except:
-        year = 2017
+        year = 2011 # drop in value of car occurs at around the 5th or 6th year
     try:
         mileage = int(mileage)
     except:
-        mileage = 60000 # many will elect to sell a car before major service is needed 
+        mileage = 60000 # many will elect to sell a car before major service is needed
     X_test = [{'make': make.lower(),
              'model': model.lower(),
-             'year': year, 
-             'odometer': mileage, 
+             'year': year,
+             'odometer': mileage,
              'title status': title_status,
              'paint color': color,
              'type': body_type,
              }]
     v = joblib.load('Cars/dv.pkl')
     n = joblib.load('Cars/mas.pkl')
+    s = joblib.load('Cars/svd.pkl')
     X_trans = v.transform(X_test)
     X_norm = n.transform(X_trans)
+    X_red = s.transform(X_norm)
     kn = joblib.load('Cars/kneighbors_kn.pkl')
     all_filtered = joblib.load('Cars/all_filtered.pkl')
-    price = kn.predict(X_norm[0])
+    price = kn.predict(X_red[0])
     neighbors_info = []
-    for j in kn.kneighbors(X_norm[0])[1][0][:10]:
+    for j in kn.kneighbors(X_red[0])[1][0][:10]:
         neighbors_info.append((all_filtered.iloc[j]['description'],all_filtered.iloc[j]['link'],all_filtered.iloc[j]['price']))
     return price[0], neighbors_info
