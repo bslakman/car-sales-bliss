@@ -161,7 +161,7 @@ def draw_regional_fig_bokeh(make, model, year):
     df['price'] = df.apply(lambda row: get_price(row['price']), axis=1)
     df['region'] = df['link'].str[1:5]
     df['year'] = df.apply(lambda row: get_year(row['description']), axis=1)
-    df['full_region'] = df.apply(lambda row: region_dict[row['region'].strip('/')], axis=1)
+    df['full_region'] = df.apply(lambda row: region_dict[row['region'].strip('/')] if row['region'].strip('/') in region_dict else None, axis=1)
     mileage_count = len(df[df['mileage'].notnull()])
 
     title1 = 'Average Price of Used {0} {1}, {2}-{3}, by region, n={4}'.format(make, model, min_auto_year, max_auto_year, len(df))
