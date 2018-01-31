@@ -35,6 +35,9 @@ region_dict = {'cap': 'Cape Cod/Islands',
 'sob': 'South Shore'}
 
 def fetch(query = None, auto_make_model = None, min_auto_year = None, max_auto_year = None, s=0):
+    """
+    Using search parameters, return content of a Craigslist search
+    """
     search_params = {key: val for key, val in locals().items() if val is not None}
     if not search_params:
         raise ValueError("No valid keywords")
@@ -45,10 +48,16 @@ def fetch(query = None, auto_make_model = None, min_auto_year = None, max_auto_y
     return resp.content, resp.encoding
 
 def parse(html, encoding='utf-8'):
+    """
+    Get xml from a Craigslist search
+    """
     parsed = BeautifulSoup(html, 'lxml', from_encoding=encoding)
     return parsed
 
 def extract_listings(parsed):
+    """
+    Return a list of dictionaries for each entry on a Craigslist results page
+    """
     listings = parsed.find_all('p', class_='result-info')
     extracted = []
     for listing in listings:
@@ -73,6 +82,10 @@ def extract_listings(parsed):
     return extracted
 
 def get_mileage(description):
+    """
+    Extract mileage from description and, if possible, conform to a mileage in
+    thousands
+    """
     description = description.lower().split('k miles')
     if len(description) == 1:
         description = description[0].split('000 miles')
@@ -89,6 +102,9 @@ def get_mileage(description):
         return np.nan
 
 def get_year(description):
+    """
+    Extract year from description and standardize if possible
+    """
     description = re.split('(20[0-9][0-9])', description)
     if len(description) == 1:
         description = re.split('([0-1][0-9])', description[0])
@@ -107,12 +123,19 @@ def get_standard_location(location):
         return location[:5].lower()
 
 def get_price(price):
+    """
+    Convert price to an integer.
+    """
     try:
         return int(price[1:])
     except:
         return np.nan
 
 def draw_regional_fig(make, model, year):
+    """
+    Returns bar graph figure rendered in Bokeh; for cars similar to the given
+    car, groups price and mileage according to region in greater Boston
+    """
     listings = []
     make_model = "{0} {1}".format(make,model)
     min_auto_year = int(year) - 2
@@ -146,6 +169,10 @@ def draw_regional_fig(make, model, year):
     return fig
 
 def draw_regional_fig_bokeh(make, model, year):
+    """
+    Returns a bar graph figure rendered in Bokeh; for cars similar to the given
+    car, groups price and mileage according to region in greater Boston
+    """
     try:
         min_auto_year = int(year) - 2
         max_auto_year = int(year) + 2
@@ -174,6 +201,10 @@ def draw_regional_fig_bokeh(make, model, year):
 
 @checkpoint(key=lambda args, kwargs: "-".join(args) + '.p', work_dir=cache_dir)
 def get_listings(make,model,year):
+    """
+    Get Craigslist listings for cars similar to input (same make/model, year +/-
+    2 years).
+    """
     listings = []
     make_model = "{0} {1}".format(make,model)
     try:
@@ -191,6 +222,11 @@ def get_listings(make,model,year):
     return listings
 
 def predict(make='', model='', year='', mileage='', title_status='', color='', body_type=''):
+    """
+    Using pickled model (K Nearest Neighbors), transformers, and a scraped
+    database of Craigslist listings, return 10 most similar cars to the one
+    inputted by user.
+    """
     try:
         year = int(year)
     except:
